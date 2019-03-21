@@ -56,7 +56,7 @@ export default
       @_chatWin.setIgnoreMouseEvents !val
   methods:
     createChatWindow: ->
-      return if @existChatWin
+      return if @existChatWin || !@url
 
       @_chatWin = new electron.remote.BrowserWindow
         # transparent: true
