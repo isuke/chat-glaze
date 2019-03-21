@@ -14,6 +14,12 @@
     label.label(for="height") Height
     input.input.-height(id="height", type="number", min="100", v-model.number.lazy="height")
 
+    label.label(for="positionX") Position X
+    input.input.-width(id="positionX", type="number", v-model.number.lazy="positionX", readonly)
+
+    label.label(for="positionY") Position Y
+    input.input.-height(id="positionY", type="number", v-model.number.lazy="positionY", readonly)
+
     label.label(for="opacity") Opacity
     input.input.-opacity(id="opacity", type="number", min="0", max="1", step="0.1", v-model.number="opacity")
 
@@ -36,6 +42,8 @@ export default
     urlVisible: false
     width: 400
     height: 800
+    positionX: 100
+    positionY: 100
     opacity: 1
     alwaysOnTop: false
     clickable: true
@@ -50,6 +58,12 @@ export default
     height: (val) ->
       return unless @existChatWin
       @_chatWin.setSize @width, val, true
+    # positionX: (val) ->
+    #   return unless @existChatWin
+    #   @$nextTick => @_chatWin.setPosition val, @height, false
+    # positionY: (val) ->
+    #   return unless @existChatWin
+    #   @$nextTick => @_chatWin.setPosition @width, val, false
     opacity: (val) ->
       return unless @existChatWin
       @_chatWin.setOpacity val
@@ -67,6 +81,8 @@ export default
         # transparent: true
         width: @width
         height: @height
+        x: @positionX
+        y: @positionY
         opacity: @opacity
         alwaysOnTop: @alwaysOnTop
         webPreferences:
@@ -79,10 +95,8 @@ export default
         @_chatWin = undefined
         @existChatWin = false
 
-      @_chatWin.on 'will-resize', (rectangle) =>
-        size = rectangle.sender.getSize()
-        @width  = size[0]
-        @height = size[1]
+      @_chatWin.on 'resize', => @setPosition()
+      @_chatWin.on 'move', => @setPosition()
 
       @existChatWin = true
     closeChatWindow: ->
@@ -91,6 +105,12 @@ export default
       @_chatWin.close()
       @_chatWin = undefined
       @existChatWin = false
+    setPosition: ->
+      bounds = @_chatWin.getBounds()
+      @width  = bounds.width
+      @height = bounds.height
+      @positionX = bounds.x
+      @positionY = bounds.y
 </script>
 
 <style lang="scss" scoped>
