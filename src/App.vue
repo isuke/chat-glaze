@@ -20,8 +20,11 @@
     label.label(for="positionY") Position Y
     input.input.-height(id="positionY", type="number", v-model.number.lazy="positionY", readonly)
 
-    label.label(for="opacity") Opacity
-    input.input.-opacity(id="opacity", type="number", min="0", max="1", step="0.1", v-model.number="opacity")
+    label.label(for="winOpacity") Window Opacity
+    input.input.-winOpacity(id="winOpacity", type="number", min="0", max="1", step="0.1", v-model.number="winOpacity")
+
+    label.label(for="bgOpacity") Background Opacity
+    input.input.-bgOpacity(id="bgOpacity", type="number", min="0", max="1", step="0.1", v-model.number="bgOpacity")
 
     label.label(for="alwaysOnTop") alwaysOnTop
     input.input(id="alwaysOnTop", type="checkbox" v-model="alwaysOnTop")
@@ -42,15 +45,19 @@ export default
     urlVisible: false
     width: 400
     height: 800
-    positionX: 100
-    positionY: 100
-    opacity: 1
+    positionX: 1676
+    positionY: -157
+    winOpacity: 1
+    bgOpacity: 1
     alwaysOnTop: false
     clickable: true
     existChatWin: false
     _chatWin: undefined
   computed:
     urlType: -> if @urlVisible then 'url' else 'password'
+    chatWindowBackgroundColor: ->
+      alpha = ('00' + Math.round(@bgOpacity * 255).toString(16)).slice(-2)
+      "##{alpha}000000"
   watch:
     width: (val) ->
       return unless @existChatWin
@@ -64,9 +71,12 @@ export default
     # positionY: (val) ->
     #   return unless @existChatWin
     #   @$nextTick => @_chatWin.setPosition @width, val, false
-    opacity: (val) ->
+    winOpacity: (val) ->
       return unless @existChatWin
       @_chatWin.setOpacity val
+    bgOpacity: (val) ->
+      return unless @existChatWin
+      @_chatWin.setBackgroundColor @chatWindowBackgroundColor
     alwaysOnTop: (val) ->
       return unless @existChatWin
       @_chatWin.setAlwaysOnTop val
@@ -78,13 +88,14 @@ export default
       return if @existChatWin || !@url
 
       @_chatWin = new electron.remote.BrowserWindow
-        # transparent: true
+        transparent: true
         width: @width
         height: @height
         x: @positionX
         y: @positionY
-        opacity: @opacity
+        opacity: @winOpacity
         alwaysOnTop: @alwaysOnTop
+        backgroundColor: @chatWindowBackgroundColor
         webPreferences:
           nodeIntegration: false
 
