@@ -1,0 +1,40 @@
+:root {
+  --unit: 16px;
+
+  --ft-size-xxl: calc(var(--unit) * 3.25);
+  --ft-size-xl:  calc(var(--unit) * 2.00);
+  --ft-size-l:   calc(var(--unit) * 1.25);
+  --ft-size-m:   calc(var(--unit) * 0.75);
+  --ft-size-s:   calc(var(--unit) * 0.50);
+  --ft-size-xs:  calc(var(--unit) * 0.25);
+
+  --space-size-xxl: calc(var(--unit) * 3.25);
+  --space-size-xl:  calc(var(--unit) * 2.00);
+  --space-size-l:   calc(var(--unit) * 1.25);
+  --space-size-m:   calc(var(--unit) * 0.75);
+  --space-size-s:   calc(var(--unit) * 0.50);
+  --space-size-xs:  calc(var(--unit) * 0.25);
+
+  font-family: HiraginoSans, Hiragino Kaku Gothic ProN, Meiryo, Arial, sans-serif;
+  font-size: var(--unit);
+
+  background-color: #252525;
+  color: #fafafd;
+}
+
+[type='password'],
+[type='text'],
+[type='number'],
+[type='url'] {
+  border-bottom: #fafafd 1px dashed;
+  padding: var(--space-size-xs);
+}
+
+button,
+[type='button'],
+[type='submit'],
+[type='cancel'] {
+  border: #fafafd 1px dashed;
+  border-radius: 10px;
+  padding: var(--space-size-xs) var(--space-size-l);
+}

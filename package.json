@@ -12,6 +12,7 @@
     "postuninstall": "electron-builder install-app-deps"
   },
   "dependencies": {
+    "destyle.css": "^1.0.5",
     "vue": "^2.6.6"
   },
   "devDependencies": {
