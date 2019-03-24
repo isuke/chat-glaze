@@ -41,12 +41,12 @@ import electron from "electron"
 
 export default
   data: ->
-    url: 'https://www.google.com/'
+    url: ''
     urlVisible: false
     width: 400
     height: 800
-    positionX: 1676
-    positionY: -157
+    positionX: 0
+    positionY: 0
     winOpacity: 1
     bgOpacity: 1
     alwaysOnTop: false
@@ -103,6 +103,7 @@ export default
       @_chatWin.loadURL @url
 
       @_chatWin.on 'closed', =>
+        @saveChatWinSettingsToLocalStorage()
         @_chatWin = undefined
         @existChatWin = false
 
@@ -122,6 +123,36 @@ export default
       @height = bounds.height
       @positionX = bounds.x
       @positionY = bounds.y
+    saveChatWinSettingsToLocalStorage: ->
+      data = {
+        url:         @url
+        width:       @width
+        height:      @height
+        positionX:   @positionX
+        positionY:   @positionY
+        winOpacity:  @winOpacity
+        bgOpacity:   @bgOpacity
+        alwaysOnTop: @alwaysOnTop
+        clickable:   @clickable
+      }
+      localStorage.setItem 'chat-win-settings', JSON.stringify(data)
+    lodeChatWinSettingsFromLocalStorage: ->
+      dataStr = localStorage.getItem 'chat-win-settings'
+
+      return unless dataStr
+
+      data = JSON.parse dataStr
+      @url         = data.url
+      @width       = data.width
+      @height      = data.height
+      @positionX   = data.positionX
+      @positionY   = data.positionY
+      @winOpacity  = data.winOpacity
+      @bgOpacity   = data.bgOpacity
+      @alwaysOnTop = data.alwaysOnTop
+      @clickable   = data.clickable
+  created: ->
+    @lodeChatWinSettingsFromLocalStorage()
 </script>
 
 <style lang="scss" scoped>
