@@ -15,10 +15,10 @@
     input.input.-height(id="height", type="number", min="100", v-model.number.lazy="height")
 
     label.label(for="positionX") Position X
-    input.input.-width(id="positionX", type="number", v-model.number.lazy="positionX", readonly)
+    input.input.-width(id="positionX", type="number", v-model.number.lazy="positionX")
 
     label.label(for="positionY") Position Y
-    input.input.-height(id="positionY", type="number", v-model.number.lazy="positionY", readonly)
+    input.input.-height(id="positionY", type="number", v-model.number.lazy="positionY")
 
     label.label(for="winOpacity") Window Opacity
     input.input.-winOpacity(id="winOpacity", type="number", min="0", max="1", step="0.1", v-model.number="winOpacity")
@@ -65,12 +65,12 @@ export default
     height: (val) ->
       return unless @existChatWin
       @_chatWin.setSize @width, val, true
-    # positionX: (val) ->
-    #   return unless @existChatWin
-    #   @$nextTick => @_chatWin.setPosition val, @height, false
-    # positionY: (val) ->
-    #   return unless @existChatWin
-    #   @$nextTick => @_chatWin.setPosition @width, val, false
+    positionX: (val) ->
+      return unless @existChatWin
+      @$nextTick => @_chatWin.setPosition val, @positionY, false
+    positionY: (val) ->
+      return unless @existChatWin
+      @$nextTick => @_chatWin.setPosition @positionX, val, false
     winOpacity: (val) ->
       return unless @existChatWin
       @_chatWin.setOpacity val
