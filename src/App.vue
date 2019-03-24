@@ -88,6 +88,9 @@ export default
       return if @existChatWin || !@url
 
       @_chatWin = new electron.remote.BrowserWindow
+        show: false
+        frame: false
+        titleBarStyle: 'customButtonsOnHover'
         transparent: true
         width: @width
         height: @height
@@ -106,9 +109,16 @@ export default
         @saveChatWinSettingsToLocalStorage()
         @_chatWin = undefined
         @existChatWin = false
-
       @_chatWin.on 'resize', => @setPosition()
       @_chatWin.on 'move', => @setPosition()
+
+      @_chatWin.once 'ready-to-show', =>
+        @_chatWin.webContents.executeJavaScript(
+          """
+            document.body.setAttribute('style', '-webkit-user-select: none;-webkit-app-region: drag;');
+          """
+        )
+        @_chatWin.show()
 
       @existChatWin = true
     closeChatWindow: ->
