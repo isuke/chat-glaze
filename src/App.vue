@@ -5,8 +5,8 @@
   form.form
     label.label(for="url")
       | URL
-      span.mark(@click="urlVisible = !urlVisible") {{urlVisible ? '⦰' : '⦾'}}
-    input.input.-url(id="url", :type="urlType", v-model="url")
+      span.mark(@click.prevent="urlVisible = !urlVisible") {{urlVisible ? '⦰' : '⦾'}}
+    input.input.-url(id="url", :type="urlType", v-model="url", placeholder="https://streamlabs.com/widgets/chat-box/v1/XXXXXXXXXXXXXXXXXXXX")
 
     label.label(for="width") Width
     input.input.-width(id="width", type="number", min="100", v-model.number.lazy="width")
@@ -181,6 +181,7 @@ export default
     display: grid;
     grid-gap: var(--space-size-l);
     grid-template-columns: max-content 1fr;
+    margin-bottom: var(--space-size-xxl);
 
     > .label {
       grid-column: 1;
@@ -197,7 +198,7 @@ export default
       grid-column: 2;
 
       &.-url {
-        min-width: 20rem;
+        min-width: 25em;
       }
 
       // &.-width { text-align: right; }
