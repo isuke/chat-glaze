@@ -1,6 +1,7 @@
 <template lang="pug">
 #app
   h1.title Chat Glaze
+  h2.version {{ version }}
 
   form.form
     label.label(for="url")
@@ -39,8 +40,11 @@
 <script lang="coffee">
 import electron from "electron"
 
+import pkg from "../package.json"
+
 export default
   data: ->
+    version: pkg.version
     url: ''
     urlVisible: false
     width: 400
@@ -174,7 +178,15 @@ export default
   > .title {
     font-size: var(--ft-size-xxl);
     margin-top: var(--space-size-xxl);
+    margin-bottom: var(--space-size-s);
+  }
+
+  > .version {
+    font-size: var(--ft-size-m);
     margin-bottom: var(--space-size-xxl);
+
+    &::before { content: "- "; }
+    &::after { content: " α -"; }
   }
 
   > .form {
