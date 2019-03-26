@@ -1,7 +1,7 @@
 'use strict'
 
 import path from 'path'
-import { app, protocol, BrowserWindow } from 'electron'
+import { app, protocol, BrowserWindow, Menu } from 'electron'
 import {
   createProtocol,
   installVueDevtools
@@ -22,6 +22,27 @@ function createWindow () {
     height: 1200,
     icon: path.join(__static, 'icon.png')
   })
+
+  const menu = Menu.buildFromTemplate([
+    {
+      label: 'App',
+      submenu: [
+        { label: 'About', role: 'about' },
+        { label: 'Quit', role: 'quit' }
+      ]
+    },
+    {
+      label: 'Edit',
+      submenu: [
+        { label: 'Select All', role: 'selectAll' },
+        { label: 'Cut', role: 'cut' },
+        { label: 'Copy', role: 'copy' },
+        { label: 'Paste', role: 'paste' }
+      ]
+    }
+  ]);
+  Menu.setApplicationMenu(menu);
+
 
   if (process.env.WEBPACK_DEV_SERVER_URL) {
     // Load the url of the dev server if in development mode
