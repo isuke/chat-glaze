@@ -122,7 +122,7 @@ export default
             document.body.setAttribute('style', '-webkit-user-select: none;-webkit-app-region: drag;');
           """
         )
-        @_chatWin.show()
+        @_chatWin.showInactive()
 
       @existChatWin = true
     closeChatWindow: ->
