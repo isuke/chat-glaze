@@ -60,7 +60,7 @@ export default
   computed:
     urlType: -> if @urlVisible then 'url' else 'password'
     chatWindowBackgroundColor: ->
-      alpha = ('00' + Math.round(@bgOpacity * 255).toString(16)).slice(-2)
+      alpha = if @bgOpacity == 1 then 'fe' else ('00' + Math.round(@bgOpacity * 255).toString(16)).slice(-2)
       "##{alpha}000000"
   watch:
     width: (val) ->
