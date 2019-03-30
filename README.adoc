@@ -4,9 +4,29 @@
 :sectanchors:
 :sectlinks:
 :sectnums:
-:sectnumlevels: 1
+:sectnumlevels: 2
 :source-highlighter: highlightjs
 :toc: preamble
 :toclevels: 1
 
-= chat-glaze
+= Chat Glaze
+
+link:https://github.com/isuke/chat-glaze/releases[Download]
+
+== Usage
+
+Please Copy and Paste Twitch Chat Widget URL (as belows).
+
+=== Twitch Native
+
+Please open your Dashboard.
+
+image:https://raw.githubusercontent.com/isuke/chat-glaze/images/usage-twitch01.png[]
+
+image:https://raw.githubusercontent.com/isuke/chat-glaze/images/usage-twitch02.png[]
+
+=== StreamLabs
+
+Please open link:https://streamlabs.com/dashboard#/chatbox[Widgets -> ChatBox].
+
+image:https://raw.githubusercontent.com/isuke/chat-glaze/images/usage-streamlabs01.png[]
