@@ -27,6 +27,12 @@
     label.label(for="bgOpacity") Background Opacity
     input.input.-bgOpacity(id="bgOpacity", type="number", min="0", max="1", step="0.1", v-model.number="bgOpacity")
 
+    label.label(for="winOpacityOnHover") Window Opacity (On Hover)
+    input.input.-winOpacityOnHover(id="winOpacityOnHover", type="number", min="0", max="1", step="0.1", v-model.number="winOpacityOnHover")
+
+    label.label(for="bgOpacityOnHover") Background Opacity (On Hover)
+    input.input.-bgOpacityOnHover(id="bgOpacityOnHover", type="number", min="0", max="1", step="0.1", v-model.number="bgOpacityOnHover")
+
     label.label(for="alwaysOnTop") alwaysOnTop
     input.input(id="alwaysOnTop", type="checkbox" v-model="alwaysOnTop")
 
@@ -51,16 +57,22 @@ export default
     height: 800
     positionX: 0
     positionY: 0
-    winOpacity: 1
-    bgOpacity: 1
+    winOpacity: 0.5
+    bgOpacity: 0.1
+    winOpacityOnHover: 0.9
+    bgOpacityOnHover: 0.1
     alwaysOnTop: false
     clickable: true
     existChatWin: false
+    isDevelopment: true # process.env.NODE_ENV != 'production'
     _chatWin: undefined
   computed:
     urlType: -> if @urlVisible then 'url' else 'password'
     chatWindowBackgroundColor: ->
       alpha = if @bgOpacity == 1 then 'fe' else ('00' + Math.round(@bgOpacity * 255).toString(16)).slice(-2)
+      "##{alpha}000000"
+    chatWindowBackgroundColorOnHover: ->
+      alpha = if @bgOpacityOnHover == 1 then 'fe' else ('00' + Math.round(@bgOpacityOnHover * 255).toString(16)).slice(-2)
       "##{alpha}000000"
   watch:
     width: (val) ->
@@ -116,15 +128,30 @@ export default
       @_chatWin.on 'resize', => @setPosition()
       @_chatWin.on 'move', => @setPosition()
 
-      @_chatWin.once 'ready-to-show', =>
-        @_chatWin.webContents.executeJavaScript(
-          """
-            document.body.setAttribute('style', '-webkit-user-select: none;-webkit-app-region: drag;');
-          """
-        )
-        @_chatWin.showInactive()
+      @_chatWin.once 'ready-to-show', => @setupChatWindow()
 
       @existChatWin = true
+    setupChatWindow: ->
+      contents = @_chatWin.webContents
+
+      contents.executeJavaScript(
+        """
+          document.body.setAttribute('style', '-webkit-user-select: none;-webkit-app-region: drag;');
+
+          document.addEventListener('mouseenter', () => console.log('__mouseenter__'));
+          document.addEventListener('mouseleave', () => console.log('__mouseleave__'));
+        """
+      )
+
+      contents.on 'console-message', (_event, _level, message, _line, _sourceId) =>
+        if message == '__mouseenter__'
+          @_chatWin.setOpacity @winOpacityOnHover
+          @_chatWin.setBackgroundColor @chatWindowBackgroundColorOnHover
+        else if message == '__mouseleave__'
+          @_chatWin.setOpacity @winOpacity
+          @_chatWin.setBackgroundColor @chatWindowBackgroundColor
+
+      @_chatWin.showInactive()
     closeChatWindow: ->
       return unless @existChatWin
 
@@ -146,6 +173,8 @@ export default
         positionY:   @positionY
         winOpacity:  @winOpacity
         bgOpacity:   @bgOpacity
+        winOpacityOnHover: @winOpacityOnHover
+        bgOpacityOnHover:  @bgOpacityOnHover
         alwaysOnTop: @alwaysOnTop
         clickable:   @clickable
       }
@@ -156,15 +185,17 @@ export default
       return unless dataStr
 
       data = JSON.parse dataStr
-      @url         = data.url
-      @width       = data.width
-      @height      = data.height
-      @positionX   = data.positionX
-      @positionY   = data.positionY
-      @winOpacity  = data.winOpacity
-      @bgOpacity   = data.bgOpacity
-      @alwaysOnTop = data.alwaysOnTop
-      @clickable   = data.clickable
+      @url         = data.url        || ''
+      @width       = data.width      || false
+      @height      = data.height     || 400
+      @positionX   = data.positionX  || 800
+      @positionY   = data.positionY  || 0
+      @winOpacity  = data.winOpacity || 0
+      @bgOpacity   = data.bgOpacity  || 0.1
+      @winOpacityOnHover = data.winOpacityOnHover || 0.9
+      @bgOpacityOnHover  = data.bgOpacityOnHover  || 0.1
+      @alwaysOnTop = data.alwaysOnTop || false
+      @clickable   = data.clickable   || false
   created: ->
     @lodeChatWinSettingsFromLocalStorage()
 </script>

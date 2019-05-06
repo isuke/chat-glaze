@@ -1,6 +1,6 @@
 {
   "name": "chat-glaze",
-  "version": "0.2.1",
+  "version": "0.3.0-beta",
   "description": "Twitch chat overlay",
   "homepage": "https://github.com/isuke/chat-glaze",
   "repository": "git@github.com:isuke/chat-glaze.git",
