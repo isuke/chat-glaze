@@ -18,25 +18,25 @@
   },
   "dependencies": {
     "destyle.css": "^1.0.5",
-    "vue": "^2.6.6"
+    "vue": "^2.6.10"
   },
   "devDependencies": {
-    "@vue/cli-plugin-eslint": "^3.5.0",
-    "@vue/cli-service": "^3.5.0",
+    "@vue/cli-plugin-eslint": "^3.7.0",
+    "@vue/cli-service": "^3.7.0",
     "@vue/eslint-config-prettier": "^4.0.1",
     "babel-eslint": "^10.0.1",
     "coffee-loader": "^0.9.0",
-    "coffeescript": "^2.3.2",
-    "electron": "^4.1.0",
+    "coffeescript": "^2.4.1",
+    "electron": "^4.2.2",
     "electron-icon-builder": "^1.0.0",
-    "eslint": "^5.8.0",
-    "eslint-plugin-vue": "^5.0.0",
-    "node-sass": "^4.9.0",
+    "eslint": "^5.16.0",
+    "eslint-plugin-vue": "^5.2.2",
+    "node-sass": "^4.12.0",
     "sass-loader": "^7.1.0",
     "vue-cli-plugin-coffee": "^0.1.0",
-    "vue-cli-plugin-electron-builder": "^1.1.3",
+    "vue-cli-plugin-electron-builder": "^1.3.2",
     "vue-cli-plugin-pug": "^1.0.7",
-    "vue-template-compiler": "^2.5.21"
+    "vue-template-compiler": "^2.6.10"
   },
   "main": "background.js"
 }
