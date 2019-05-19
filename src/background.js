@@ -1,7 +1,7 @@
 'use strict'
 
 import path from 'path'
-import { app, protocol, BrowserWindow, Menu } from 'electron'
+import { app, BrowserWindow, Menu } from 'electron'
 import {
   createProtocol,
   installVueDevtools
@@ -13,14 +13,15 @@ const isDevelopment = process.env.NODE_ENV !== 'production'
 // be closed automatically when the JavaScript object is garbage collected.
 let win
 
-// Standard scheme must be registered before the app is ready
-protocol.registerStandardSchemes(['app'], { secure: true })
 function createWindow () {
   // Create the browser window.
   win = new BrowserWindow({
     width: 800,
     height: 1200,
-    icon: path.join(__static, 'icon.png')
+    icon: path.join(__static, 'icon.png'),
+    webPreferences: {
+      nodeIntegration: true
+    }
   })
 
   const menu = Menu.buildFromTemplate([
