@@ -38,7 +38,9 @@ function createWindow () {
         { label: 'Select All', role: 'selectAll' },
         { label: 'Cut', role: 'cut' },
         { label: 'Copy', role: 'copy' },
-        { label: 'Paste', role: 'paste' }
+        { label: 'Paste', role: 'paste' },
+        { label: 'Reload', role: 'reload' },
+        { label: 'Force Reload', role: 'forcereload' },
       ]
     }
   ]);
