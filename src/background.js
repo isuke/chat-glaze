@@ -7,6 +7,8 @@ import {
   installVueDevtools
 } from 'vue-cli-plugin-electron-builder/lib'
 
+import pkg from '../package.json'
+
 const isDevelopment = process.env.NODE_ENV !== 'production'
 
 // Keep a global reference of the window object, if you don't, the window will
@@ -16,6 +18,7 @@ let win
 function createWindow () {
   // Create the browser window.
   win = new BrowserWindow({
+    title: `Chat Glaze v${pkg.version}${isDevelopment ? ' [DEV]' : ''}`,
     width: 800,
     height: isDevelopment ? 900 : 760,
     icon: path.join(__static, 'icon.png'),
@@ -45,7 +48,6 @@ function createWindow () {
     }
   ]);
   Menu.setApplicationMenu(menu);
-
 
   if (process.env.WEBPACK_DEV_SERVER_URL) {
     // Load the url of the dev server if in development mode
