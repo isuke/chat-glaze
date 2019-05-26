@@ -1,172 +1,67 @@
 <template lang="pug">
 #app
   h1.title Chat Glaze
-  h2.version {{ version }}
 
-  form.form
-    label.label(for="url")
-      | URL
-      span.mark(@click.prevent="urlVisible = !urlVisible") {{urlVisible ? '⦰' : '⦾'}}
-    input.input.-url(id="url", :type="urlType", v-model="url", placeholder="https://streamlabs.com/widgets/chat-box/v1/XXXXXXXXXXXXXXXXXXXX")
+  ul.list
+    li.item.-prpfile(
+      v-for="profile in profileList",
+      @click.prevent="currentProfileId = profile.id",
+      :class="{ '-current': currentProfileId == profile.id }"
+    ) {{ profile.name }}
+    li.item.-add(@click.prevent="addProfile", :class="{ '-only': profileList.length == 0 }")
+      | + Add Profile
 
-    label.label(for="width") Width
-    input.input.-width(id="width", type="number", min="100", v-model.number.lazy="width")
-
-    label.label(for="height") Height
-    input.input.-height(id="height", type="number", min="100", v-model.number.lazy="height")
-
-    label.label(for="positionX") Position X
-    input.input.-width(id="positionX", type="number", v-model.number.lazy="positionX")
-
-    label.label(for="positionY") Position Y
-    input.input.-height(id="positionY", type="number", v-model.number.lazy="positionY")
-
-    label.label(for="winOpacity") Window Opacity
-    input.input.-winOpacity(id="winOpacity", type="number", min="0", max="1", step="0.1", v-model.number="winOpacity")
-
-    label.label(for="bgOpacity") Background Opacity
-    input.input.-bgOpacity(id="bgOpacity", type="number", min="0", max="1", step="0.1", v-model.number="bgOpacity")
-
-    label.label(for="alwaysOnTop") alwaysOnTop
-    input.input(id="alwaysOnTop", type="checkbox" v-model="alwaysOnTop")
-
-    label.label(for="clickable") clickable
-    input.input(id="clickable", type="checkbox" v-model="clickable")
-
-    input.button(type="button", value="Open Chat Window", @click="createChatWindow", v-if="!existChatWin")
-    input.button(type="button", value="Close Chat Window", @click="closeChatWindow", v-if="existChatWin")
+  profile-item.profile(
+    v-for="profile in profileList",
+    :id="profile.id",
+    :name="profile.name",
+    @update:name="profile.name = $event",
+    @delete="deleteProfile"
+    v-show="profile.id === currentProfileId")
 </template>
 
 <script lang="coffee">
-import electron from "electron"
+import nanoid   from "nanoid"
 
-import pkg from "../package.json"
+import ProfileItem from "@/components/ProfileItem.vue"
 
 export default
+  components:
+    "profile-item": ProfileItem
   data: ->
-    version: pkg.version
-    url: ''
-    urlVisible: false
-    width: 400
-    height: 800
-    positionX: 0
-    positionY: 0
-    winOpacity: 1
-    bgOpacity: 1
-    alwaysOnTop: false
-    clickable: true
-    existChatWin: false
-    _chatWin: undefined
-  computed:
-    urlType: -> if @urlVisible then 'url' else 'password'
-    chatWindowBackgroundColor: ->
-      alpha = if @bgOpacity == 1 then 'fe' else ('00' + Math.round(@bgOpacity * 255).toString(16)).slice(-2)
-      "##{alpha}000000"
+    currentProfileId: undefined
+    profileList: []
   watch:
-    width: (val) ->
-      return unless @existChatWin
-      @_chatWin.setSize val, @height, true
-    height: (val) ->
-      return unless @existChatWin
-      @_chatWin.setSize @width, val, true
-    positionX: (val) ->
-      return unless @existChatWin
-      @$nextTick => @_chatWin.setPosition val, @positionY, false
-    positionY: (val) ->
-      return unless @existChatWin
-      @$nextTick => @_chatWin.setPosition @positionX, val, false
-    winOpacity: (val) ->
-      return unless @existChatWin
-      @_chatWin.setOpacity val
-    bgOpacity: (val) ->
-      return unless @existChatWin
-      @_chatWin.setBackgroundColor @chatWindowBackgroundColor
-    alwaysOnTop: (val) ->
-      return unless @existChatWin
-      @_chatWin.setAlwaysOnTop val
-    clickable: (val) ->
-      return unless @existChatWin
-      @_chatWin.setIgnoreMouseEvents !val
+    profileList:
+      handler: -> @saveProfileList()
+      deep: true
   methods:
-    createChatWindow: ->
-      return if @existChatWin || !@url
-
-      @_chatWin = new electron.remote.BrowserWindow
-        show: false
-        frame: false
-        titleBarStyle: 'customButtonsOnHover'
-        transparent: true
-        width: @width
-        height: @height
-        x: @positionX
-        y: @positionY
-        opacity: @winOpacity
-        alwaysOnTop: @alwaysOnTop
-        backgroundColor: @chatWindowBackgroundColor
-        webPreferences:
-          nodeIntegration: false
-
-      @_chatWin.setIgnoreMouseEvents !@clickable
-      @_chatWin.loadURL @url
-
-      @_chatWin.on 'closed', =>
-        @saveChatWinSettingsToLocalStorage()
-        @_chatWin = undefined
-        @existChatWin = false
-      @_chatWin.on 'resize', => @setPosition()
-      @_chatWin.on 'move', => @setPosition()
-
-      @_chatWin.once 'ready-to-show', =>
-        @_chatWin.webContents.executeJavaScript(
-          """
-            document.body.setAttribute('style', '-webkit-user-select: none;-webkit-app-region: drag;');
-          """
-        )
-        @_chatWin.showInactive()
-
-      @existChatWin = true
-    closeChatWindow: ->
-      return unless @existChatWin
-
-      @_chatWin.close()
-      @_chatWin = undefined
-      @existChatWin = false
-    setPosition: ->
-      bounds = @_chatWin.getBounds()
-      @width  = bounds.width
-      @height = bounds.height
-      @positionX = bounds.x
-      @positionY = bounds.y
-    saveChatWinSettingsToLocalStorage: ->
-      data = {
-        url:         @url
-        width:       @width
-        height:      @height
-        positionX:   @positionX
-        positionY:   @positionY
-        winOpacity:  @winOpacity
-        bgOpacity:   @bgOpacity
-        alwaysOnTop: @alwaysOnTop
-        clickable:   @clickable
-      }
-      localStorage.setItem 'chat-win-settings', JSON.stringify(data)
-    lodeChatWinSettingsFromLocalStorage: ->
-      dataStr = localStorage.getItem 'chat-win-settings'
+    addProfile: ->
+      id = nanoid(10)
+      @profileList.push { id: id, name: 'New Profile' }
+      @currentProfileId = id
+    saveProfileList: ->
+      localStorage.setItem 'chat-win-profile-list', JSON.stringify(@profileList)
+    loadProfileList: ->
+      dataStr = localStorage.getItem 'chat-win-profile-list'
 
       return unless dataStr
 
-      data = JSON.parse dataStr
-      @url         = data.url
-      @width       = data.width
-      @height      = data.height
-      @positionX   = data.positionX
-      @positionY   = data.positionY
-      @winOpacity  = data.winOpacity
-      @bgOpacity   = data.bgOpacity
-      @alwaysOnTop = data.alwaysOnTop
-      @clickable   = data.clickable
+      @profileList = JSON.parse dataStr
+
+      @currentProfileId = @profileList[0].id
+    deleteProfile: (id) ->
+      index = @profileList.findIndex (profile) => profile.id == id
+      return if index < 0
+      @profileList.splice(index, 1)
+
+      @currentProfileId = if @profileList[0] then @profileList[0].id else undefined
   created: ->
-    @lodeChatWinSettingsFromLocalStorage()
+    @loadProfileList()
+
+    @addProfile() if @profileList.length == 0
+
+    localStorage.removeItem 'chat-win-settings' # remove old data
 </script>
 
 <style lang="scss" scoped>
@@ -174,53 +69,58 @@ export default
   display: flex;
   flex-direction: column;
   align-items: center;
+  padding: var(--space-size-m);
+  margin-top: var(--space-size-xl);
+  margin-bottom: var(--space-size-xl);
 
   > .title {
     font-size: var(--ft-size-xxl);
-    margin-top: var(--space-size-xxl);
-    margin-bottom: var(--space-size-s);
+    margin-bottom: var(--space-size-xl);
   }
 
-  > .version {
-    font-size: var(--ft-size-m);
-    margin-bottom: var(--space-size-xxl);
+  > .list {
+    display: flex;
+    flex-direction: row;
+    align-items: baseline;
+    justify-content: center;
+    width: 100%;
+    border-bottom: var(--border-height) var(--color-day) solid;
 
-    &::before { content: "- "; }
-    &::after { content: " α -"; }
+    > .item {
+      background-color: var(--color-night);
+      padding: var(--space-size-s) var(--space-size-l);
+
+      transform: translateY(var(--border-height));
+
+      @ghost border-top-radius(var(--border-radius));
+
+      &.-prpfile {
+        &.-current {
+          border-top:    var(--border-height) var(--color-day) solid;
+          border-left:   var(--border-height) var(--color-day) solid;
+          border-right:  var(--border-height) var(--color-day) solid;
+          border-bottom: var(--border-height) var(--color-night) solid;
+
+          cursor: default;
+        }
+        &:not(.-current) {
+          cursor: pointer;
+        }
+      }
+
+      &.-add {
+        font-weight: bold;
+        cursor: pointer;
+
+        &.-only {
+          border-bottom: var(--border-height) var(--color-day) solid;
+        }
+      }
+    }
   }
 
-  > .form {
-    display: grid;
-    grid-gap: var(--space-size-l);
-    grid-template-columns: max-content 1fr;
-    margin-bottom: var(--space-size-xxl);
-
-    > .label {
-      grid-column: 1;
-      text-align: right;
-
-      > .mark {
-        font-size: var(--ft-size-l);
-        margin-left: var(--space-size-xs);
-        margin-right: var(--space-size-xs);
-      }
-    }
-
-    > .input {
-      grid-column: 2;
-
-      &.-url {
-        min-width: 25em;
-      }
-
-      // &.-width { text-align: right; }
-      // &.-height { text-align: right; }
-      // &.-opacity { text-align: right; }
-    }
-
-    > .button {
-      grid-column: span 2;
-    }
+  > .profile {
+    margin-top: var(--space-size-l);
   }
 }
 </style>

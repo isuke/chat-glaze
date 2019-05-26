@@ -60,6 +60,7 @@ function createWindow () {
   }
 
   win.on('closed', () => {
+    closeAllWindows()
     win = null
   })
 }

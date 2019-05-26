@@ -15,26 +15,37 @@
   --space-size-s:   calc(var(--unit) * 0.50);
   --space-size-xs:  calc(var(--unit) * 0.25);
 
+  --color-night: #252525;
+  --color-day:   #fafafd;
+
+  --border-height: 1px;
+  --border-radius: 8px;
+
   font-family: HiraginoSans, Hiragino Kaku Gothic ProN, Meiryo, Arial, sans-serif;
   font-size: var(--unit);
 
-  background-color: #252525;
-  color: #fafafd;
+  background-color: var(--color-night);
+  color: var(--color-day);
 }
 
 [type='password'],
 [type='text'],
 [type='number'],
 [type='url'] {
-  border-bottom: #fafafd 1px dashed;
+  border-bottom: var(--color-day) 1px dashed;
   padding: var(--space-size-xs);
+
+  &:read-only {
+    opacity: 0.3;
+    cursor: default;
+  }
 }
 
 button,
 [type='button'],
 [type='submit'],
 [type='cancel'] {
-  border: #fafafd 1px dashed;
-  border-radius: 10px;
+  border: var(--color-day) 1px dashed;
+  border-radius: var(--border-radius);
   padding: var(--space-size-xs) var(--space-size-l);
 }
