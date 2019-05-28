@@ -1,7 +1,7 @@
 'use strict'
 
 import path from 'path'
-import { app, BrowserWindow, Menu } from 'electron'
+import { app, BrowserWindow, Menu, ipcMain } from 'electron'
 import {
   createProtocol,
   installVueDevtools
@@ -15,6 +15,11 @@ const isDevelopment = process.env.NODE_ENV !== 'production'
 // be closed automatically when the JavaScript object is garbage collected.
 let win
 
+ipcMain.on('asynchronous-message', (event, arg) => {
+  console.log(arg) // prints "ping"
+  event.reply('asynchronous-reply', 'pong')
+})
+
 function createWindow () {
   // Create the browser window.
   win = new BrowserWindow({
@@ -26,6 +31,10 @@ function createWindow () {
       nodeIntegration: true
     }
   })
+
+  // win.webContents.on('did-finish-load', () => {
+  //   win.webContents.send('ping', 'from main to renderer')
+  // })
 
   const menu = Menu.buildFromTemplate([
     {

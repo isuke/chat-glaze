@@ -141,6 +141,11 @@ export default
         )
         @_chatWin.showInactive()
 
+      # @_chatWin.webContents.on 'did-finish-load', =>
+      #   console.log 'did-finish-load'
+      #   @_chatWin.webContents.send('asynchronous-message', 'whoooooooh')
+      #   @_chatWin.webContents.send('ping', 'whoooooooh!')
+
       @existChatWin = true
     closeChatWindow: ->
       return unless @existChatWin
@@ -205,6 +210,10 @@ export default
       'alwaysOnTop'
       'clickable'
     ], debounce(((_nweVal, _oldVal) => @saveChatWinSettingsToLocalStorage()), 1000)
+
+    electron.ipcRenderer.on 'asynchronous-reply', (event, arg) =>
+      console.log(arg)
+    electron.ipcRenderer.send('asynchronous-message', 'ping')
 </script>
 
 <style lang="scss" scoped>
