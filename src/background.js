@@ -22,8 +22,8 @@ function createWindow () {
   // Create the browser window.
   win = new BrowserWindow({
     title: `Chat Glaze v${pkg.version}${isDevelopment ? ' [DEV]' : ''}`,
-    width: 800,
-    height: isDevelopment ? 900 : 760,
+    width: 830,
+    height: isDevelopment ? 900 : 810,
     icon: path.join(__static, 'icon.png'),
     webPreferences: {
       nodeIntegration: true
