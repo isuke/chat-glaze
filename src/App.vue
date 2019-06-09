@@ -5,6 +5,7 @@
   ul.list
     li.item.-prpfile(
       v-for="profile in profileList",
+      :key="profile.id",
       @click.prevent="currentProfileId = profile.id",
       :class="{ '-current': currentProfileId == profile.id }"
     ) {{ profile.name }}
@@ -13,6 +14,7 @@
 
   profile-item.profile(
     v-for="profile in profileList",
+    :key="profile.id",
     :id="profile.id",
     :name="profile.name",
     @update:name="profile.name = $event",
